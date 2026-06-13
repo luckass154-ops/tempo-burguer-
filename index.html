@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tempo Burguer - MenuFlex</title>
+
+<style>
+body{
+font-family: Arial, sans-serif;
+margin:0;
+background:#0d0d0d;
+color:#fff;
+}
+
+header{
+background:linear-gradient(90deg,#6a0dad,#000,#d4af37);
+padding:20px;
+text-align:center;
+}
+
+h1{margin:0;color:#fff;}
+p{margin:5px 0;color:#ddd;}
+
+.banner{
+padding:20px;
+text-align:center;
+background:#1a1a1a;
+}
+
+.produtos{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+padding:20px;
+}
+
+.card{
+background:#1f1f1f;
+border:1px solid #333;
+border-radius:10px;
+width:250px;
+margin:10px;
+padding:15px;
+}
+
+.card button{
+background:#6a0dad;
+color:#fff;
+border:none;
+padding:10px;
+width:100%;
+margin-top:10px;
+cursor:pointer;
+border-radius:5px;
+}
+
+#cart{
+position:fixed;
+right:10px;
+top:10px;
+background:#111;
+padding:15px;
+width:250px;
+border:1px solid #444;
+border-radius:10px;
+}
+
+select, input, button{
+width:100%;
+margin-top:10px;
+padding:8px;
+border-radius:5px;
+border:none;
+}
+
+button.action{
+background:#d4af37;
+color:#000;
+font-weight:bold;
+}
+
+.small{
+font-size:12px;
+color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🍔 Tempo Burguer</h1>
+<p>MenuFlex - Sistema de pedidos</p>
+</header>
+
+<section class="banner">
+<h2>🔥 Hambúrgueres Artesanais</h2>
+<p>Monte seu pedido abaixo</p>
+</section>
+
+<section class="produtos">
+
+<div class="card">
+<h3>X-Burguer</h3>
+<p>R$ 12,00</p>
+<button onclick="add('X-Burguer',12)">Adicionar</button>
+</div>
+
+<div class="card">
+<h3>X-Bacon</h3>
+<p>R$ 18,00</p>
+<button onclick="add('X-Bacon',18)">Adicionar</button>
+</div>
+
+<div class="card">
+<h3>X-Tudo</h3>
+<p>R$ 25,00</p>
+<button onclick="add('X-Tudo',25)">Adicionar</button>
+</div>
+
+</section>
+
+<div id="cart">
+<h3>🛒 Carrinho</h3>
+<div id="items"></div>
+
+<label>Bairro</label>
+<select id="bairro">
+<option value="0">Selecione</option>
+<option value="5">Dirceu - R$5</option>
+<option value="7">Itararé - R$7</option>
+<option value="10">Novo Horizonte - R$10</option>
+</select>
+
+<label>Nome</label>
+<input id="nome" placeholder="Seu nome">
+
+<div class="small">PIX: 06832508336</div>
+<div class="small">Favorecido: Lucas Rômulo Pereira de Sousa</div>
+
+<button class="action" onclick="copiarPix()">Copiar Pix</button>
+<button class="action" onclick="finalizar()">Finalizar Pedido</button>
+
+<h4 id="total">Total: R$0</h4>
+</div>
+
+<script>
+
+let cart = [];
+
+function add(name, price){
+cart.push({name,price});
+render();
+}
+
+function render(){
+let html="";
+let total=0;
+
+cart.forEach((i,index)=>{
+html += i.name+" - R$ "+i.price+" <br>";
+total += i.price;
+});
+
+document.getElementById("items").innerHTML=html;
+calc();
+}
+
+function calc(){
+let total = cart.reduce((a,b)=>a+b.price,0);
+let tax = parseFloat(document.getElementById("bairro").value);
+if(isNaN(tax)) tax=0;
+document.getElementById("total").innerText="Total: R$"+(total+tax);
+}
+
+document.getElementById("bairro").addEventListener("change",calc);
+
+function copiarPix(){
+navigator.clipboard.writeText("06832508336");
+alert("PIX copiado!");
+}
+
+function finalizar(){
+let nome=document.getElementById("nome").value;
+let bairro=document.getElementById("bairro");
+let taxa=parseFloat(bairro.value)||0;
+
+let total = cart.reduce((a,b)=>a+b.price,0)+taxa;
+
+let msg="🍔 *Novo Pedido Tempo Burguer*\n";
+msg += "Nome: "+nome+"\n";
+msg += "Itens:\n";
+
+cart.forEach(i=>{
+msg += "- "+i.name+" R$ "+i.price+"\n";
+});
+
+msg += "Taxa: R$"+taxa+"\n";
+msg += "Total: R$"+total+"\n";
+msg += "PIX: 06832508336";
+
+let url="https://wa.me/5586999850573?text="+encodeURIComponent(msg);
+window.open(url,"_blank");
+}
+
+</script>
+
+</body>
+</html>
